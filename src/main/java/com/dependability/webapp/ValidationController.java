@@ -8,8 +8,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class ValidationController {
 
     /**
-     * Endpoint: /validate/isNumeric?input=123.45
-     * Devuelve "true"/"false" si la cadena es interpretable como número.
+     * @requires input != null;
+     * @ensures \result.equals("true") || \result.equals("false");
+     * @ensures (\result.equals("true") <==> org.apache.commons.lang3.math.NumberUtils.isCreatable(input));
      */
     @GetMapping("/isNumeric")
     public String isNumeric(@RequestParam String input) {

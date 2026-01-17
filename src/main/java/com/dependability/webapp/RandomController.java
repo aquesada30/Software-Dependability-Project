@@ -8,8 +8,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class RandomController {
 
     /**
-     * Endpoint: /random/string?length=8&letters=true&numbers=true
-     * Genera una cadena aleatoria con Commons Lang.
+     * @requires length >= 0 && length <= 1024;
+     * @ensures \result != null;
+     * @ensures \result.length() == length;
+     * @ensures (\result.length() == 0) ==> (length == 0);
+     * @ensures (\forall int i; 0 <= i && i < \result.length();
+     *              letters || numbers);
      */
     @GetMapping("/string")
     public String randomString(
