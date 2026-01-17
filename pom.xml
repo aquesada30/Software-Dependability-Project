@@ -1,165 +1,201 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.dependability</groupId>
-	<artifactId>webapp</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>webapp</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
-	
-<dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.0.1</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.dependability</groupId>
+  <artifactId>webapp</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>webapp</name>
+  <description>Demo project for Spring Boot</description>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+
+  <dependencies>
+
+    <!-- Spring Web (MVC) -->
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+
+    <!-- Tests -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Apache Commons Lang -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.14.0</version>
+    </dependency>
+
+    <!-- JUnit Platform Launcher (para PIT/JUnit 5) -->
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- PIT plugin JUnit5 -->
+    <dependency>
+      <groupId>org.pitest</groupId>
+      <artifactId>pitest-junit5-plugin</artifactId>
+      <version>1.2.3</version>
+    </dependency>
+
+    <!-- JMH (benchmarks) -->
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.37</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>1.37</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- Spring Boot -->
+      <plugin>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-webmvc</artifactId>
-    </dependency>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
 
-    
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
+      <!-- Surefire (JUnit 5) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+      </plugin>
 
-    
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.14.0</version>
-    </dependency>
+      <!-- JaCoCo -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
+      <!-- PIT: Mutation Testing -->
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.19.4</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.3</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <testPlugin>junit5</testPlugin>
 
-	<dependency>
-		<groupId>org.junit.platform</groupId>
-		<artifactId>junit-platform-launcher</artifactId>
-		<scope>test</scope>
-	</dependency>
+          <!-- Analiza todas las clases del paquete -->
+          <targetClasses>
+            <param>com.dependability.webapp.*</param>
+          </targetClasses>
+          <targetTests>
+            <param>com.dependability.webapp.*</param>
+          </targetTests>
 
-</dependencies>
+          <verbose>true</verbose>
+          <useClasspathJar>true</useClasspathJar>
+          <timestampedReports>false</timestampedReports>
+          <failWhenNoMutations>false</failWhenNoMutations>
+          <threads>1</threads>
+          <timeoutConstant>4000</timeoutConstant>
 
+          <outputFormats>
+            <param>HTML</param>
+            <param>XML</param>
+          </outputFormats>
 
-	
-	<build>
-	<plugins>
+          <excludedClasses>
+            <param>com.dependability.webapp.WebappApplication*</param>
+          </excludedClasses>
 
-		<plugin>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-maven-plugin</artifactId>
-		</plugin>
+          <jvmArgs>
+            <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
+          </jvmArgs>
+        </configuration>
+      </plugin>
 
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-surefire-plugin</artifactId>
-			<version>3.2.5</version>
-		</plugin>
+    </plugins>
+  </build>
 
-		
-		<plugin>
-			<groupId>org.pitest</groupId>
-			<artifactId>pitest-maven</artifactId>
-		<version>1.19.4</version> 
+  <!-- Perfiles -->
+  <profiles>
+    <profile>
+      <id>jmh</id>
+      <build>
+        <plugins>
+          <!-- Compilador con annotation processor de JMH -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+              <source>17</source>
+              <target>17</target>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>org.openjdk.jmh</groupId>
+                  <artifactId>jmh-generator-annprocess</artifactId>
+                  <version>1.37</version>
+                </path>
+              </annotationProcessorPaths>
+            </configuration>
+          </plugin>
 
-		
-		<dependencies>
-			<dependency>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-junit5-plugin</artifactId>
-				<version>1.2.3</version> 
-			</dependency>
-		</dependencies>
-
-		<configuration>
-			
-			<javaExecutable>C:\Program Files\Eclipse Adoptium\jdk-21.0.9.10-hotspot\bin\java.exe</javaExecutable>
-
-			<testPlugin>junit5</testPlugin>
-
-			
-			<targetClasses>
-			<param>com.dependability.webapp.ReverseController*</param>
-			</targetClasses>
-			<targetTests>
-			<param>com.dependability.webapp.*</param>
-			</targetTests>
-
-			<verbose>true</verbose>
-
-			<jvmArgs>
-			<jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
-			<jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
-			<jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
-			<jvmArg>--add-opens=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
-			</jvmArgs>
-
-			<useClasspathJar>true</useClasspathJar>
-
-			<timestampedReports>false</timestampedReports>
-
-			<failWhenNoMutations>false</failWhenNoMutations>
-
-			<threads>1</threads>
-			<timeoutConstant>4000</timeoutConstant>
-
-			<outputFormats>
-			<param>HTML</param>
-			<param>XML</param>
-			</outputFormats>
-
-			<excludedClasses>
-			<param>com.dependability.webapp.WebappApplication*</param>
-			</excludedClasses>
-		</configuration>
-		</plugin>
-
-		
-		<plugin>
-		<groupId>org.jacoco</groupId>
-		<artifactId>jacoco-maven-plugin</artifactId>
-		<version>0.8.12</version>
-		<executions>
-			<execution>
-			<id>prepare-agent</id>
-			<goals>
-				<goal>prepare-agent</goal>
-			</goals>
-			</execution>
-			<execution>
-			<id>report</id>
-			<phase>test</phase>
-			<goals>
-				<goal>report</goal>
-			</goals>
-			</execution>
-		</executions>
-		</plugin>
-
-	</plugins>
-	</build>
-
-
+          <!-- Ejecutar JMH sin shade (más simple/estable) -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.5.0</version>
+            <configuration>
+              <mainClass>org.openjdk.jmh.Main</mainClass>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
